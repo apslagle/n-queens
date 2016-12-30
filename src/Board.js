@@ -79,27 +79,74 @@
     //
     // test if a specific row on this board contains a conflict
     hasRowConflictAt: function(rowIndex) {
-      return false; // fixme
+      var theRows = this.get(rowIndex);
+      //var rowIndexlength = theRows.length;
+      //var acc = 0;
+      //for(var i=0; i<rowIndexlength; i++) {
+        //acc += theRows[i];
+      //}
+        //return acc>1;
+        var sum = theRows.reduce(function(a, b){
+          return a + b;
+        }, 0);
+        return (sum > 1);
     },
 
     // test if any rows on this board contain conflicts
     hasAnyRowConflicts: function() {
-      return false; // fixme
+      // var result = false;
+      // var length = this.get(0).length;
+      // for(var i = 0; i <length; i++) {
+      //   if(foundConflict) {
+      //     return true;
+      //   }
+      // }
+      // return result;
+      var boardSize = this.get('n');
+      // console.log(this.get('n'));
+      for (var i = 0; i < boardSize; i++){
+        if (this.hasRowConflictAt(i)){
+          // console.log("this is i", i)
+          return true;
+        }
+      }
+      return false;
     },
 
-
+/*
+displayBoard([
+          [0, 1, 0, 0],
+          [0, 0, 0, 1],
+          [1, 0, 0, 0],
+          [0, 0, 1, 0]
+        ]);
+*/
 
     // COLUMNS - run from top to bottom
     // --------------------------------------------------------------
     //
     // test if a specific column on this board contains a conflict
     hasColConflictAt: function(colIndex) {
-      return false; // fixme
+      var boardSize = this.get('n');
+      var acc =0;
+      for(var i=0; i<boardSize; i++) {
+        var row = this.get(i);
+        acc += row[colIndex]
+      }
+      return acc>1;
     },
 
     // test if any columns on this board contain conflicts
     hasAnyColConflicts: function() {
-      return false; // fixme
+            var boardSize = this.get('n');
+      // console.log(this.get('n'));
+      for (var i = 0; i < boardSize; i++){
+        if (this.hasColConflictAt(i)){
+          // console.log("this is i", i)
+          return true;
+        }
+      }
+      return false;
     },
 
 
@@ -109,11 +156,35 @@
     //
     // test if a specific major diagonal on this board contains a conflict
     hasMajorDiagonalConflictAt: function(majorDiagonalColumnIndexAtFirstRow) {
-      return false; // fixme
+      var corrector = 0;
+      if(majorDiagonalColumnIndexAtFirstRow < 0) {
+        corrector = Math.abs(majorDiagonalColumnIndexAtFirstRow);
+      }
+      var boardSize = this.get('n');
+      var acc =0;
+      var fullBoard = [];
+      for(var i = 0; i < boardSize; i++) {
+        fullBoard.push(this.get(i));
+      }
+      var diagonalLength = boardSize - majorDiagonalColumnIndexAtFirstRow;
+      if(corrector > 0) {
+        diagonalLength = boardSize;
+      }
+      for(corrector; corrector < diagonalLength; corrector++) {
+        acc += fullBoard[0 + corrector][majorDiagonalColumnIndexAtFirstRow + corrector];
+      }
+      return acc>1;
     },
 
     // test if any major diagonals on this board contain conflicts
     hasAnyMajorDiagonalConflicts: function() {
+      var boardSize = this.get('n');
+      var diagonalNumber = -boardSize + 1;
+      for(var i = boardSize - 1; i > diagonalNumber; i--) {
+        if(this.hasMajorDiagonalConflictAt(i)){
+          return true;
+        }
+      }
       return false; // fixme
     },
 
@@ -124,12 +195,35 @@
     //
     // test if a specific minor diagonal on this board contains a conflict
     hasMinorDiagonalConflictAt: function(minorDiagonalColumnIndexAtFirstRow) {
-      return false; // fixme
+
+      var boardSize = this.get('n'); //4
+      var acc = 0;
+      var fullBoard = [];
+      for(var i = 0; i < boardSize; i++) {
+        fullBoard.push(this.get(i));
+      }
+      for (var j = 0; j < boardSize; j++){
+        var columnIndex = minorDiagonalColumnIndexAtFirstRow - j; //3
+        var rowIndex = 0 + j;
+        if(this._isInBounds(rowIndex, columnIndex)){
+          acc += fullBoard[rowIndex][columnIndex];
+        }
+      //first:            1             3
+      }
+      return acc>1;
+
     },
 
     // test if any minor diagonals on this board contain conflicts
     hasAnyMinorDiagonalConflicts: function() {
-      return false; // fixme
+      var boardSize =this.get('n');
+      var double = boardSize*2;
+      for(var i = 0; i < (boardSize*2)-1; i++) {
+        if(this.hasMinorDiagonalConflictAt(i)) {
+          return true;
+        }
+      }
+      return false;
     }
 
     /*--------------------  End of Helper Functions  ---------------------*/
